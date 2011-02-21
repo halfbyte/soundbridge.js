@@ -137,7 +137,6 @@ var SoundBridge = function(channels, sampleRate, pathForFallback) {
         flashBuffer = "";
         var durStart = new Date().getTime();
         callback(that, bufferSize, channels);
-        log(flashBuffer);
         return flashBuffer;
       };
       flashObject.setCallback("__soundbridgeGenSound");
