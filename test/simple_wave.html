@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>untitled</title>
+	<script type="text/javascript" src="../soundbridge.js"></script>
+	
+<script type="text/javascript" charset="utf-8">
+  (function() {
+    var log = function(text) {
+      var debugElement = document.getElementById("debug");
+      debugElement.innerHTML += text + "\n";
+    };
+    var soundbridge = null;
+    
+    var absoluteBufferPos = 0;
+    var calc = function(bridge, bufferSize, channels) {
+      for(var b=0;b<bufferSize;b++) {
+        var period = ((absoluteBufferPos + b) % 100) / 100;
+        period *= 2 * Math.PI;
+        var val = Math.sin(period);
+        bridge.addToBuffer(val,val);
+      }
+      absoluteBufferPos += bufferSize;      
+    };
+
+    window.onload = function() {
+      
+      log("Starting Up");
+      //var absoluteBufferPos = 0;
+      soundbridge = SoundBridge(2, 44100, '..');
+      window.setTimeout(function() {
+        soundbridge.setCallback(calc);
+        log("now stating to play.");
+        soundbridge.play();
+      }, 1000);
+      
+    };
+  })();
+</script>
+<style type="text/css" media="screen">
+  #debug {
+    font-family: monospace;
+    height: 400px;
+    overflow: auto;
+    border: 1px solid black;
+    padding: 2px;
+    
+  }
+</style>
+</head>
+
+<body>
+<h1>Test page for soundbridge.js</h1>
+
+<pre id="debug"></pre>
+
+</body>
+</html>
