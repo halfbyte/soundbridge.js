@@ -13,7 +13,6 @@
       var debugElement = document.getElementById("debug");
       debugElement.innerHTML += text + "\n";
     };
-    var soundbridge = null;
     
     var absoluteBufferPos = 0;
     var calc = function(bridge, bufferSize, channels) {
@@ -30,13 +29,11 @@
       
       log("Starting Up");
       //var absoluteBufferPos = 0;
-      soundbridge = SoundBridge(2, 44100, '..');
-      window.setTimeout(function() {
+      SoundBridge(2, 44100, '..', function(soundbridge) {
         soundbridge.setCallback(calc);
         log("now stating to play.");
         soundbridge.play();
-      }, 1000);
-      
+      });      
     };
   })();
 </script>

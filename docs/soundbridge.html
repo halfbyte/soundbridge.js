@@ -1,0 +1,260 @@
+<!DOCTYPE html>  <html> <head>   <title>soundbridge.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               soundbridge.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Returns the appropriate soundbridge implementation object, although you will
+probably not need that object later in your code.</p>
+
+<ul>
+<li>channels = Number of channels (1-2)</li>
+<li>sampleRate = Sample rate of the sound (i.e. 441000)</li>
+<li>pathForFallback = Path to the soundbridge folder to load fallback flash</li>
+<li>onReady = a callback that will be called if soundbridge is ready to operate. 
+<ul><li>You should call setCallback from that callback. It's like inception.</li>
+<li>The callback gets the soundbridge object as a parameter (here, it gets deep)</li></ul></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SoundBridge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">pathForFallback</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">)</span> <span class="p">{</span>  
+  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">webkitAudioContext</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">AudioContext</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">SoundBridgeWebAudio</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">Audio</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">audio</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Audio</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nx">audio</span><span class="p">.</span><span class="nx">mozSetup</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">SoundBridgeAudioData</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">SoundBridgeFallback</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">pathForFallback</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>a prototype to enhance the specific implementations.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">SoundBridgePrototype</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>console.log wrapper</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">SoundBridgePrototype</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">console</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Starts playback</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">SoundBridgePrototype</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Stops playback</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">SoundBridgePrototype</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Web Audio is a standard currently discussed in the audio working group
+and currently implemented in Chrome (can be enabled via about:flags) on OS X
+Windows and Linux support is, probably, in the canary builds. Haven't tested
+that, though.</p>
+
+<p>See <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html">SpecificationProposal</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SoundBridgeWebAudio</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SoundBridgePrototype</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">jsNode</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">bufferCounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">channelData</span> <span class="o">=</span> <span class="p">[];</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Sets the callback function for audio processing
+callback gets three parameters:</p>
+
+<ul>
+<li>The soundbridge object itself (to call addBuffer on it)</li>
+<li>The number of samples the callback should calculate</li>
+<li>The number of channels the callback needs to fill</li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">setCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fun</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span> <span class="o">=</span> <span class="nx">fun</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+    <span class="nx">jsNode</span><span class="p">.</span><span class="nx">onaudioprocess</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">bufferCounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="nx">jsNodeOutputBuffer</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">outputBuffer</span><span class="p">;</span>
+      <span class="k">for</span><span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">channels</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channelData</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">jsNodeOutputBuffer</span><span class="p">.</span><span class="nx">getChannelData</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+      <span class="p">}</span>        
+      <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">playing</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">channelData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">,</span> <span class="nx">channels</span><span class="p">);</span>        
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>        
+        <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">channelData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">for</span><span class="p">(</span><span class="nx">c</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">c</span><span class="o">&lt;</span><span class="nx">channels</span><span class="p">;</span><span class="nx">c</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">channelData</span><span class="p">[</span><span class="nx">c</span><span class="p">][</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>  
+    <span class="p">};</span>
+  <span class="p">};</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Add one Sample to Buffer. The function takes a float value per Channel, so
+for a stereo signal, thou shalt call the function with two parameters
+Will throw an exception if called with the wrong number of channels.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">addToBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="nx">channels</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span><span class="p">(</span><span class="s2">&quot;Given wrong number of arguments, not matching channels&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">channels</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">channelData</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">bufferCounter</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="nx">bufferCounter</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>The inital builds of a WebAudio enabled webkit had the AudioContext
+object without a namespace. I'll leave that it for now for the
+vague hope that one day it will be standardised and the
+namespace will be taken out again.
+If other Browsers will get WebAudio support, this will need more
+if-clauses, of course.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">webkitAudioContext</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">context</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">webkitAudioContext</span><span class="p">();</span>
+    <span class="nx">jsNode</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">createJavaScriptNode</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">channels</span><span class="p">);</span>
+    <span class="nx">jsNode</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">destination</span><span class="p">);</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;I&#39;m on webkit.&quot;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">AudioContext</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">context</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioContext</span><span class="p">();</span>
+    <span class="nx">jsNode</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">createJavaScriptNode</span><span class="p">(</span><span class="mi">8192</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">channels</span><span class="p">);</span>
+    <span class="nx">jsNode</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">destination</span><span class="p">);</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;I&#39;m on web audio api, not namespaced&quot;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">throw</span><span class="p">(</span><span class="s2">&quot;No AudioContext found&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Return the public object.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">onReady</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>  
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>The AudioData API from Mozilla/Firefox is a very crude, but functional
+API that was introduced in Firefox 4 and therefore earns the prize of
+the first production ready Audio API.</p>
+
+<p>Soundbridge wraps the API in a callback based API.</p>
+
+<p>See <a href="https://wiki.mozilla.org/Audio_Data_API">API Docs</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SoundBridgeAudioData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SoundBridgePrototype</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">bufferCounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">soundData</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">preBufferSize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">currentWritePosition</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">tail</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Sets the callback function for audio processing
+callback gets three parameters:</p>
+
+<ul>
+<li>The soundbridge object itself (to call addBuffer on it)</li>
+<li>The number of samples the callback should calculate</li>
+<li>The number of channels the callback needs to fill</li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>    
+  <span class="nx">that</span><span class="p">.</span><span class="nx">setCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fun</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span> <span class="o">=</span> <span class="nx">fun</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>write data and check if all data was written, if not,
+create tail that will be written next time.</p>             </td>             <td class="code">               <div class="highlight"><pre>    
+    <span class="kd">var</span> <span class="nx">writeData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">written</span><span class="p">;</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>  
+        <span class="nx">written</span> <span class="o">=</span> <span class="nx">audio</span><span class="p">.</span><span class="nx">mozWriteAudio</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="nx">currentWritePosition</span> <span class="o">+=</span> <span class="nx">written</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">written</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Not all the data was written, saving the tail...</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">tail</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">written</span><span class="p">);</span>
+          <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">tail</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Will be called every 100 ms and will 
+call the callback if sound data is needed to fill buffer
+Now we have a callback based API. WIN!</p>             </td>             <td class="code">               <div class="highlight"><pre>    
+    <span class="kd">var</span> <span class="nx">timerFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">playing</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">remainder</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>try to write tail, return if tail wasn't written completely.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="nx">writeData</span><span class="p">(</span><span class="nx">tail</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Check if we need add some data to the audio output.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">currentPosition</span> <span class="o">=</span> <span class="nx">audio</span><span class="p">.</span><span class="nx">mozCurrentSampleOffset</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">available</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">currentPosition</span> <span class="o">+</span> <span class="nx">prebufferSize</span> <span class="o">-</span> <span class="nx">currentWritePosition</span><span class="p">,</span> <span class="mi">22050</span> <span class="o">*</span> <span class="nx">channels</span><span class="p">);</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">available</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Request some sound data from the callback function.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">soundData</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Float32Array</span><span class="p">(</span><span class="nx">available</span> <span class="o">*</span> <span class="nx">channels</span><span class="p">);</span>
+        <span class="nx">bufferCounter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">soundData</span><span class="p">.</span><span class="nx">length</span> <span class="o">/</span> <span class="nx">channels</span><span class="p">,</span> <span class="nx">channels</span><span class="p">);</span>
+        <span class="nx">writeData</span><span class="p">(</span><span class="nx">soundData</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">};</span>  
+    <span class="nb">window</span><span class="p">.</span><span class="nx">setInterval</span><span class="p">(</span><span class="nx">timerFunction</span><span class="p">,</span><span class="mi">100</span><span class="p">);</span>
+  <span class="p">};</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Add one Sample to Buffer. The function takes a float value per Channel, so
+for a stereo signal, thou shalt call the function with two parameters
+Will throw an exception if called with the wrong number of channels.</p>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>I told you the API is crude: For every sample, you'll need to write
+<em>channel</em> floats to the buffer.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">addToBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">channels</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">soundData</span><span class="p">[</span><span class="nx">bufferCounter</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+      <span class="nx">bufferCounter</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+    
+  <span class="k">if</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">Audio</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">audio</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Audio</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nx">audio</span><span class="p">.</span><span class="nx">mozSetup</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;I&#39;m on AudiData (Firefox etc.)&quot;</span><span class="p">);</span>
+    <span class="nx">audioElement</span> <span class="o">=</span> <span class="nx">audio</span><span class="p">;</span>
+    <span class="nx">audioElement</span><span class="p">.</span><span class="nx">mozSetup</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">);</span>
+    <span class="nx">prebufferSize</span> <span class="o">=</span> <span class="nx">sampleRate</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">throw</span><span class="p">(</span><span class="s2">&quot;No Audio Object found&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">onReady</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>  
+<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>If all else fails, use Flash if possible.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SoundBridgeFallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="nx">pathForFallback</span><span class="p">,</span> <span class="nx">onReady</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SoundBridgePrototype</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">flashObject</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">flashBuffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Starts playing. Since callbacks are handled by the flash object in this case,
+the prototype needs to be overwritten.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nx">flashObject</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Stops playing. See above.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="nx">flashObject</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+  <span class="p">};</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Utility function to get the movie instance on every browser.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="kd">var</span> <span class="nx">getMovie</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">movieName</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">navigator</span><span class="p">.</span><span class="nx">appName</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;Microsoft&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nb">window</span><span class="p">[</span><span class="nx">movieName</span><span class="p">];</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nb">document</span><span class="p">[</span><span class="nx">movieName</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Appending the flash movie that will handle the fallback sound output to the document.
+The flash movie should call the soundBridgeOnReady callback, which then will call
+the onReady callback given to the constructor. This is all very confusing.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="kd">var</span> <span class="nx">fallThrough</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    
+    <span class="nb">window</span><span class="p">.</span><span class="nx">__soundBridgeOnReady</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">onReady</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+    <span class="p">};</span>
+    
+    <span class="nx">playerCode</span> <span class="o">=</span> <span class="s1">&#39;&lt;object classid=&quot;clsid:d27cdb6e-ae6d-11cf-96b8-444553540000&quot; width=&quot;200&quot; height=&quot;30&quot; id=&quot;soundbridgeFlash&quot; align=&quot;middle&quot;&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">pathForFallback</span> <span class="o">+</span> <span class="s1">&#39;/soundbridge.swf&quot;/&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;always&quot; /&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;quality&quot; value=&quot;high&quot; /&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;scale&quot; value=&quot;noscale&quot; /&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;salign&quot; value=&quot;lt&quot; /&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;bgcolor&quot; value=&quot;#ffffff&quot;/&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;onready=__soundBridgeOnReady&quot;/&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;embed src=&quot;&#39;</span> <span class="o">+</span> <span class="nx">pathForFallback</span> <span class="o">+</span> <span class="s1">&#39;/soundbridge.swf?no_one=is_true&quot; bgcolor=&quot;#ffffff&quot; FlashVars=&quot;onready=__soundBridgeOnReady&quot; width=&quot;200&quot; height=&quot;30&quot; name=&quot;soundbridgeFlash&quot; quality=&quot;high&quot; align=&quot;middle&quot; allowScriptAccess=&quot;always&quot; type=&quot;application/x-shockwave-flash&quot; pluginspage=&quot;http://www.macromedia.com/go/getflashplayer&quot; /&gt;&#39;</span><span class="p">;</span>
+    <span class="nx">playerCode</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">body</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">body</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="nx">playerCode</span><span class="p">;</span>
+    <span class="nx">flashObject</span> <span class="o">=</span> <span class="nx">getMovie</span><span class="p">(</span><span class="s1">&#39;soundbridgeFlash&#39;</span><span class="p">);</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>This seems like a really bad idea, but is the fastest way I could find.
+I haven't tried native base64 encoding using btoa and atob, though.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">encodeHex</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">word</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">HEX</span> <span class="o">=</span> <span class="s2">&quot;0123456789ABCDEF&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">buffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">buffer</span> <span class="o">+=</span> <span class="nx">HEX</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">word</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">);</span>
+    <span class="nx">buffer</span> <span class="o">+=</span> <span class="nx">HEX</span><span class="p">.</span><span class="nx">charAt</span><span class="p">((</span><span class="nx">word</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">);</span>
+    <span class="nx">buffer</span> <span class="o">+=</span> <span class="nx">HEX</span><span class="p">.</span><span class="nx">charAt</span><span class="p">((</span><span class="nx">word</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">);</span>
+    <span class="nx">buffer</span> <span class="o">+=</span> <span class="nx">HEX</span><span class="p">.</span><span class="nx">charAt</span><span class="p">((</span><span class="nx">word</span> <span class="o">&gt;&gt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xF</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">buffer</span><span class="p">;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Sets the callback function for audio processing
+callback gets three parameters:</p>
+
+<ul>
+<li>The soundbridge object itself (to call addBuffer on it)</li>
+<li>The number of samples the callback should calculate</li>
+<li>The number of channels the callback needs to fill</li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">setCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fun</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span> <span class="o">=</span> <span class="nx">fun</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">__soundbridgeGenSound</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">bufferPos</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">flashBuffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">durStart</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">();</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">channels</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">flashBuffer</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="nx">flashObject</span><span class="p">.</span><span class="nx">setCallback</span><span class="p">(</span><span class="s2">&quot;__soundbridgeGenSound&quot;</span><span class="p">);</span>
+  <span class="p">};</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Add one Sample to Buffer. The function takes a float value per Channel, so
+for a stereo signal, thou shalt call the function with two parameters
+Will throw an exception if called with the wrong number of channels.
+please note that the flash fallback currently only plays back one channel. Yes, stupid, I know.</p>             </td>             <td class="code">               <div class="highlight"><pre>  
+  <span class="nx">that</span><span class="p">.</span><span class="nx">addToBuffer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">word</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">32768.0</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="mf">32768.0</span><span class="p">);</span>
+    <span class="nx">flashBuffer</span> <span class="o">+=</span> <span class="nx">encodeHex</span><span class="p">(</span><span class="nx">word</span><span class="p">);</span>    
+  <span class="p">};</span>
+  
+  <span class="nx">fallThrough</span><span class="p">();</span>
+  <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Falling Through to Flash&quot;</span><span class="p">);</span>
+  
+  <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
